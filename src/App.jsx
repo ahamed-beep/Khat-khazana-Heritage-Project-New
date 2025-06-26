@@ -3,10 +3,8 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router';
 import { Toaster } from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// Circular loader on every route
 
 
-// Pages and Components
 import Navbar from './Components/Navbar';
 import Signup from './Components/Signup';
 import Login from './Components/Login';
