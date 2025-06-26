@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router';
 import Nax from './Nax';
 import Footer from './Footer';
 import { fetchApprovedPhotographs } from './Redux/submission';
-import { useSearch } from './SearchContext';
+import { useSearch } from '../SearchContext';
 
 const PhotoGallery = () => {
   const dispatch = useDispatch();

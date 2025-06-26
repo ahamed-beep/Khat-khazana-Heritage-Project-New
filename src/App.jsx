@@ -61,7 +61,8 @@ import PhotoGallery from './Components/PhotoGallery';
 import LettersPage from './LetterPage';
 import AdminSubmissionForm from './Components/Admin/AdminSubmissionForm';
 import RouteChangeLoader from './Components/RouteChangeLoader';
-import { SearchProvider } from './Components/SearchContext';
+import { SearchProvider } from './SearchContext';
+import SearchResultsPage from './Components/SearchResultPage';
 
 
 const PageWrapper = ({ children }) => {
@@ -155,7 +156,7 @@ const App = () => {
             <Route path="/aboutslider" element={<Sliders />} />
             <Route path="/letters" element={<LettersPage />} />
             <Route path="/adminsubmission" element={<AdminSubmissionForm />} />
-<Route path="/search" element={<SearchResultsPage />} />
+<Route path="/search" element={<SearchResultsPage/>} />
             <Route element={<ProtectedRoute />}>
               <Route path="/admin" element={<Admin />} />
               <Route path="/routechangeloader" element={<RouteChangeLoader />} />
