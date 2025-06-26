@@ -61,8 +61,7 @@ import PhotoGallery from './Components/PhotoGallery';
 import LettersPage from './LetterPage';
 import AdminSubmissionForm from './Components/Admin/AdminSubmissionForm';
 import RouteChangeLoader from './Components/RouteChangeLoader';
-import SearchResultsPage from './Components/SearchResultPage';
-import { SearchProvider } from './Components/SearchContext';
+import  SearchProvider  from './Components/SearchContext';
 
 const PageWrapper = ({ children }) => {
   const location = useLocation();
