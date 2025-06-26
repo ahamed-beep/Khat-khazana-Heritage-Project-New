@@ -97,8 +97,8 @@ const Footer = () => {
             }`}
           >
             <ul className="space-y-2 text-gray-400">
-              <li><Link to="/submission" className="hover:text-white transition">Submit a Letter</Link></li>
-              <li><Link to="/submission" className="hover:text-white transition">View Submissions</Link></li>
+              <li><Link to="/sub" className="hover:text-white transition">Submit a Letter</Link></li>
+              <li><Link to="/letters" className="hover:text-white transition">View Submissions</Link></li>
             </ul>
           </div>
         </div>

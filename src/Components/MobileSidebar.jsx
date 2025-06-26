@@ -2,42 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { HomeIcon } from "@heroicons/react/24/solid";
 
-const MobileSidebar = ({ isOpen, onClose, dropdownState = {}, toggleDropdown }) => {
-  const lettersDropdownItems = [
-    {
-      label: "BY DECADE (1900–2000)",
-      to: "/letters/decade",
-      children: Array.from({ length: 11 }, (_, i) => {
-        const year = 1900 + i * 10;
-        return {
-          label: `${year}`,
-          to: `/letters/decade/${year}`,
-        };
-      }),
-    },
-    {
-      label: "BY CATEGORY",
-      to: "/letters/category",
-      children: [
-        "LOVE LETTERS",
-        "FAMILY",
-        "WAR/POLITICAL TURMOIL",
-        "TRAVEL",
-        "DAIRYPAGES/NEWSPAGES",
-        "CARDS/POSTCARDS",
-        "MOVIE POSTER",
-        "CALENDERS",
-        "OTHERS",
-        "LETTERS BY FAMOUS PERSONALITIES",
-        "FEATURED LETTERS",
-        "FEATURED PHOTO GRAPHS",
-      ].map((label) => ({
-        label,
-        to: `/letters/category/${label.toLowerCase().replace(/\s|\//g, "-")}`,
-      })),
-    },
-  ];
-
+const MobileSidebar = ({ isOpen, onClose }) => {
   const otherLinks = [
     { label: "ABOUT US", to: "/about" },
     { label: "PHOTO GALLERY", to: "/photo" },
@@ -82,37 +47,18 @@ const MobileSidebar = ({ isOpen, onClose, dropdownState = {}, toggleDropdown }) 
           ))}
         </div>
 
-        <div className="pt-4 border-t border-[#d8cbb4]">
-          <button
-            onClick={() => toggleDropdown("letters")}
-            className="w-full text-left font-bold text-[#3b2f22] hover:text-black uppercase tracking-widest text-sm"
-          >
+        
+        <div className="pt-4 border-t border-[#d8cbb4] space-y-2">
+          <Link to={'/letters'} className="text-sm font-bold text-[#3b2f22] uppercase tracking-widest">
             LETTERS
-          </button>
-
-          {dropdownState.letters &&
-            lettersDropdownItems.map((item) => (
-              <div key={item.label} className="pl-3 mt-2 space-y-1">
-                <button
-                  onClick={() => toggleDropdown(item.label)}
-                  className="w-full text-left text-[13px] font-semibold text-[#4e4337] hover:text-black"
-                >
-                  {item.label}
-                </button>
-
-                {dropdownState[item.label] &&
-                  item.children?.map((child) => (
-                    <Link
-                      key={child.label}
-                      to={child.to}
-                      onClick={onClose}
-                      className="block text-sm pl-5 text-[#6d6354] hover:text-black"
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-              </div>
-            ))}
+          </Link>
+        
+        </div>
+           <div className="pt-4 border-t border-[#d8cbb4] space-y-2">
+          <Link to={'/photo'} className="text-sm font-bold text-[#3b2f22] uppercase tracking-widest">
+            Photographs
+          </Link>
+        
         </div>
       </div>
     </div>
