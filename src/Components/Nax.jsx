@@ -14,23 +14,11 @@ const Nax = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [dropdownState, setDropdownState] = useState({ letters: false });
   const [searchError, setSearchError] = useState("");
 
-  const toggleDropdown = (key) => {
-    setDropdownState((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
   const validateSearchTerm = (term) => {
-    if (term.trim().length < 2) {
-      return "Search term must be at least 2 characters";
-    }
-    if (!/^[a-zA-Z0-9\s]+$/.test(term)) {
-      return "Only letters and numbers allowed";
-    }
+    if (term.trim().length < 2) return "Search term must be at least 2 characters";
+    if (!/^[a-zA-Z0-9\s]+$/.test(term)) return "Only letters and numbers allowed";
     return "";
   };
 
@@ -41,18 +29,13 @@ const Nax = () => {
         setSearchError(error);
         return;
       }
-      
-      const q = searchTerm.trim().toLowerCase();
+
+      let q = searchTerm.trim().toLowerCase();
       let searchQuery = q;
-      
-      // Map common search terms to proper categories
-      if (q.includes("letter")) {
-        searchQuery = "letters";
-      } else if (q.includes("photo") || q.includes("image")) {
-        searchQuery = "photographs";
-      } else if (q.includes("product") || q.includes("shop")) {
-        searchQuery = "products";
-      }
+
+      if (q.includes("letter")) searchQuery = "letters";
+      else if (q.includes("photo") || q.includes("image")) searchQuery = "photographs";
+      else if (q.includes("product") || q.includes("shop")) searchQuery = "products";
 
       navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
       setShowSearch(false);
@@ -82,128 +65,100 @@ const Nax = () => {
 
   return (
     <>
+      {/* Top Logo/Header */}
       <div className="w-full text-center py-4 bg-white shadow-sm">
         <h1 className="text-3xl font-serif font-semibold tracking-widest uppercase text-gray-800">
           KHAT KHAZANA HERITAGE PROJECT
         </h1>
       </div>
 
-<nav className="sticky top-0 w-full bg-white px-4 py-3 relative border-b border-gray-200 z-50">
-        <div className="max-w-6xl mx-auto">
-          {/* Mobile View */}
-          <div className="flex justify-between items-center md:hidden">
-            <button 
-              onClick={() => setIsSidebarOpen(true)}
-              aria-label="Open menu"
-              className="p-1"
-            >
-              <Bars3Icon className="h-6 w-6 text-gray-700" />
+      {/* Main Navigation */}
+   <nav className="sticky top-0 w-full bg-white px-4 py-3 border-b border-gray-200 z-50">
+  <div className="max-w-6xl mx-auto">
+    {/* Search bar */}
+    {showSearch ? (
+      <div className="flex justify-center ">
+        <div className="relative w-full md:w-[800px]">
+          <div className="flex items-center     bg-white shadow-sm">
+            <input
+              type="text"
+              autoFocus
+              placeholder="Type then hit enter to search..."
+              className="text-lg w-full outline-none font-serif bg-white text-gray-700"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onKeyDown={handleSearchSubmit}
+            />
+            <button onClick={handleClearSearch} aria-label="Clear search">
+              <XMarkIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
             </button>
+          </div>
+          {searchError && (
+            <p className="text-xs text-red-500 mt-1">{searchError}</p>
+          )}
+        </div>
+      </div>
+    ) : (
+      <div className="flex justify-center items-center flex-wrap gap-10 md:gap-16">
+       <Link to="/" className="hover:text-gray-900 hidden md:block">
+  <HomeIcon className="h-5 w-5 text-gray-700" />
+</Link>
 
-            {showSearch ? (
-              <div className="flex-1 mx-2 relative">
-                <div className="flex items-center gap-2 bg-white px-3 py-2 border border-gray-300 rounded-lg">
-                  <input
-                    type="text"
-                    autoFocus
-                    placeholder="Search letters, photos..."
-                    className="text-sm w-full outline-none bg-white"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    onKeyDown={handleSearchSubmit}
-                  />
-                  
-                  <button 
-                    onClick={handleClearSearch}
-                    aria-label="Clear search"
-                  >
-                    <XMarkIcon className="h-5 w-5 text-gray-500 hover:text-gray-700" />
-                  </button>
-                </div>
-                {searchError && (
-                  <p className="absolute top-full left-0 mt-1 text-xs text-red-500">
-                    {searchError}
-                  </p>
-                )}
-              </div>
-            ) : (
-              <button 
-                onClick={() => setShowSearch(true)}
-                aria-label="Search"
-                className="p-1"
+
+        <div className="hidden md:flex items-center gap-15">
+          {navLinks.map((link) => {
+            const isSupport = link.label === "SUPPORT";
+            const isActive = location.pathname === link.to;
+
+            const supportClass = isSupport
+              ? "animate-pulse text-orange-600 font-extrabold"
+              : isActive
+              ? "text-black font-semibold"
+              : "text-gray-700 hover:text-black";
+
+            return (
+              <Link
+                key={link.label}
+                to={link.to}
+                className={`text-sm font-medium transition-all duration-300 ${supportClass}`}
               >
-                <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
-              </button>
-            )}
-          </div>
-
-          {/* Desktop View */}
-          <div className="hidden md:flex flex-col items-center">
-            <div className="h-[1px] bg-gray-200 w-full mb-3" />
-
-            <div className="flex items-center justify-between w-full">
-                <div>
-
-                <Link to="/" className="hover:text-gray-900">
-                  <HomeIcon className="h-5 w-5 text-gray-700" />
-                </Link>
-                </div>
-              <div className="flex items-center space-x-6">
-              
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.label}
-                    to={link.to}
-                    className={`text-sm font-medium px-1 py-2 transition-colors ${
-                      location.pathname === link.to
-                        ? "text-indigo-600 border-b-2 border-indigo-600"
-                        : "text-gray-700 hover:text-indigo-500"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-
-              <div className="relative w-64">
-                <div className="flex items-center bg-white px-3 py-2 border border-gray-300 rounded-lg">
-                  <MagnifyingGlassIcon className="h-4 w-4 text-gray-400 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="Search letters, photos, products..."
-                    className="text-sm w-full outline-none"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    onKeyDown={handleSearchSubmit}
-                  />
-                  {searchTerm && (
-                    <button 
-                      onClick={handleClearSearch}
-                      aria-label="Clear search"
-                    >
-                      <XMarkIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                    </button>
-                  )}
-                </div>
-                {searchError && (
-                  <p className="absolute top-full left-0 mt-1 text-xs text-red-500">
-                    {searchError}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="h-[1px] bg-gray-200 w-full mt-3" />
-          </div>
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
 
-        <MobileSidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          navLinks={navLinks}
-          currentPath={location.pathname}
-        />
-      </nav>
+     {/* For large screens (unchanged) */}
+<div className="hidden md:flex items-center space-x-4">
+  <button onClick={() => setShowSearch(true)} aria-label="Search">
+    <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
+  </button>
+</div>
+
+{/* For small screens: Menu on left, Search on right */}
+<div className="flex w-full justify-between items-center md:hidden mt-4 px-4">
+  <button onClick={() => setIsSidebarOpen(true)} aria-label="Menu">
+    <Bars3Icon className="h-6 w-6 text-gray-700" />
+  </button>
+  <button onClick={() => setShowSearch(true)} aria-label="Search">
+    <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
+  </button>
+</div>
+
+
+      </div>
+    )}
+
+    {/* Mobile Sidebar */}
+    <MobileSidebar
+      isOpen={isSidebarOpen}
+      onClose={() => setIsSidebarOpen(false)}
+      navLinks={navLinks}
+      currentPath={location.pathname}
+    />
+  </div>
+</nav>
+
     </>
   );
 };

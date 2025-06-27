@@ -155,6 +155,7 @@ const App = () => {
             <Route path="/photographsubmissions" element={<PhotographSubmissionsPage />} />
             <Route path="/aboutslider" element={<Sliders />} />
             <Route path="/letters" element={<LettersPage />} />
+             <Route path="/article/:id" element={<Article />} />
             <Route path="/adminsubmission" element={<AdminSubmissionForm />} />
 <Route path="/search" element={<SearchResultsPage/>} />
             <Route element={<ProtectedRoute />}>

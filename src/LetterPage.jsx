@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import Nax from './Components/Nax';
 import Footer from './Components/Footer';
 import { fetchApprovedLetters } from './Components/Redux/submission';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const LettersPage = () => {
   const dispatch = useDispatch();
@@ -15,15 +16,10 @@ const LettersPage = () => {
   const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedDecade, setSelectedDecade] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     dispatch(fetchApprovedLetters());
   }, [dispatch]);
-
-  useEffect(() => {
-    handleSearch();
-  }, [approvedLetters, localSearchTerm,  selectedCategory, selectedDecade]);
 
   const getDecadeFromDate = (dateString) => {
     if (!dateString) return '';
@@ -31,32 +27,31 @@ const LettersPage = () => {
     return `${Math.floor(year / 10) * 10}`;
   };
 
-  const handleSearch = () => {
+  const filteredData = useMemo(() => {
     let results = approvedLetters || [];
 
-    // Apply filters only if not on search results page
-    if (location.pathname !== '/search') {
-      if (selectedCategory) {
-        results = results.filter(item => item.category === selectedCategory);
-      }
-      
-      if (selectedDecade) {
-        results = results.filter(item => {
-          const decade = getDecadeFromDate(item.dateimage);
-          return decade === selectedDecade;
-        });
-      }
-      
-      // Use local search term for letters page, global for search page
-    
+    if (selectedCategory) {
+      results = results.filter(item => item.category === selectedCategory);
     }
-    
-    setFilteredData(results);
-  };
+
+    if (selectedDecade) {
+      results = results.filter(item => getDecadeFromDate(item.dateimage) === selectedDecade);
+    }
+
+    if (localSearchTerm) {
+      const term = localSearchTerm.toLowerCase();
+      results = results.filter(item =>
+        item.title?.toLowerCase().includes(term) ||
+        item.story?.toLowerCase().includes(term)
+      );
+    }
+
+    return results;
+  }, [approvedLetters, localSearchTerm, selectedCategory, selectedDecade]);
 
   return (
-    <div> 
-      <Nax/>
+    <div>
+      <Nax />
       <div className="bg-white py-10">
         <div className="text-center">
           <h1 className="text-5xl md:text-6xl font-heritage font-bold text-black mb-6">
@@ -67,8 +62,7 @@ const LettersPage = () => {
           </h2>
           <p className="text-[#1a1a1a] text-[20px] leading-[1.8] tracking-wide mb-6 font-light max-w-3xl mx-auto">
             <strong className="font-semibold">
-              The Heritage Library collects beautiful illustrations from the past which are
-              100% free to use...
+              The Heritage Library collects beautiful illustrations from the past which are 100% free to use...
             </strong>
           </p>
         </div>
@@ -78,12 +72,12 @@ const LettersPage = () => {
         <div className="w-full min-h-screen bg-white flex flex-col items-center px-4 relative">
           <div className="h-20 w-full" />
 
-          {/* Search Section */}
-          <div className="bg-white rounded-lg shadow-lg flex flex-col md:flex-row w-full max-w-4xl items-center border border-gray-200">
+          {/* Search Bar */}
+          <div className="bg-white rounded-lg shadow-lg flex flex-col md:flex-row w-full items-stretch border border-gray-200 max-w-4xl">
             <input
               type="text"
               placeholder="Search for a title"
-              className="flex-1 p-4 rounded-t-lg md:rounded-t-none md:rounded-l-lg border border-gray-200 focus:outline-none"
+              className="flex-1 p-4 border-b md:border-b-0 md:border-r border-gray-200 focus:outline-none w-full"
               value={localSearchTerm}
               onChange={(e) => setLocalSearchTerm(e.target.value)}
             />
@@ -110,69 +104,74 @@ const LettersPage = () => {
               onChange={(e) => setSelectedDecade(e.target.value)}
             >
               <option value="">By Decade</option>
-              <option>1900</option>
-              <option>1910</option>
-              <option>1920</option>
-              <option>1930</option>
-              <option>1940</option>
-              <option>1950</option>
-              <option>1960</option>
-              <option>1970</option>
-              <option>1980</option>
-              <option>1990</option>
-              <option>2000</option>
+              {[...Array(12)].map((_, i) => (
+                <option key={i} value={1900 + i * 10}>{1900 + i * 10}</option>
+              ))}
             </select>
-            <button
-              className="bg-orange-600 hover:bg-blue-600 text-white px-6 py-4 rounded-b-lg md:rounded-b-none md:rounded-r-lg w-full md:w-auto transition-all duration-300"
-              onClick={handleSearch}
+          </div>
+
+          {/* ✅ Letter Count Display */}
+          {filteredData.length > 0 && (
+            <p className="mt-6 text-lg font-medium text-gray-700">
+              Showing <span className="font-bold">{filteredData.length}</span> letter{filteredData.length > 1 ? 's' : ''}
+              {selectedCategory && ` in “${selectedCategory.replace(/-/g, ' ')}” category`}
+            </p>
+          )}
+
+          {/* Fade-in Grid */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${selectedCategory}-${selectedDecade}-${localSearchTerm}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-10 px-4 pb-10 mt-10 w-full max-w-6xl"
             >
-              Search
-            </button>
-          </div>
-
-          {/* Filtered Results */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 px-4 pb-10 mt-10 w-full max-w-6xl">
-            {loading ? (
-              <p className="text-center col-span-full text-gray-500">Loading...</p>
-            ) : filteredData.length === 0 ? (
-              <p className="text-center col-span-full text-gray-500">No results found.</p>
-            ) : (
-              filteredData.map((item) => (
-                <div
-                  key={item._id}
-                  className="group flex flex-col items-center text-center hover:bg-[#f4f1ec] transition duration-300 p-4"
-                >
-                  <div className="text-md italic font-semibold mb-3">
-                    <hr className="my-3 border-t-4 border-black w-full" />
-                    {item.dateimage}
-                    <hr className="my-3 border-t-2 border-black w-full" />
+              {loading && approvedLetters.length === 0 ? (
+                Array(6).fill(0).map((_, i) => (
+                  <div key={i} className="h-64 bg-gray-100 animate-pulse rounded-lg" />
+                ))
+              ) : filteredData.length === 0 ? (
+                <p className="text-center col-span-full text-gray-500">No results found.</p>
+              ) : (
+                filteredData.map((item) => (
+                  <div
+                    key={item._id}
+                    className="group flex flex-col items-center text-center bg-white hover:bg-[#f4f1ec] shadow-md hover:shadow-xl transition-all duration-300 p-4 rounded-lg"
+                  >
+                    <div className="text-md italic font-semibold mb-3">
+                      <hr className="my-3 border-t-4 border-black w-full" />
+                      {item.dateimage}
+                      <hr className="my-3 border-t-2 border-black w-full" />
+                    </div>
+                    <h2 className="text-3xl text-[#e75b1e] font-bold mb-4 leading-snug group-hover:text-[#003366] transition-colors duration-300">
+                      {item.title}
+                    </h2>
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full border-4 border-black transform group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <p className="mt-4 text-xl text-left text-gray-900 leading-relaxed group-hover:text-black transition">
+                      {item.story}
+                    </p>
+                    <div className="mt-4">
+                      <Link
+                        to={`/details/${item._id}`}
+                        className="bg-[#e75b1e] group-hover:bg-[#003366] text-white font-bold px-6 py-4 mt-8 tracking-wide transition-all duration-300 inline-block"
+                      >
+                        Read
+                      </Link>
+                    </div>
                   </div>
-                  <h2 className="text-3xl text-[#e75b1e] font-bold mb-4 leading-snug group-hover:text-black transition">
-                    {item.title}
-                  </h2>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full border-4 border-black"
-                  />
-      <p className="mt-4 text-xl text-left text-gray-900 leading-relaxed group-hover:text-black transition">
-  {item.story.slice(0, 80)}...
-</p>
-
-                  <div className="mt-4">
-                    <Link
-                      to={`/details/${item._id}`}
-                      className="bg-[#e75b1e] group-hover:bg-[#003366] text-white font-bold px-6 py-4 mt-8 tracking-wide transition duration-300 inline-block"
-                    >
-                      Read
-                    </Link>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
+
       <Footer />
     </div>
   );
