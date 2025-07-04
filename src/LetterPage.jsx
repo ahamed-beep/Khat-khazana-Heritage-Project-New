@@ -7,6 +7,7 @@ import Nax from './Components/Nax';
 import Footer from './Components/Footer';
 import { fetchApprovedLetters } from './Components/Redux/submission';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 18;
 const MAX_VISIBLE_PAGES = 3;
@@ -83,15 +84,20 @@ const LettersPage = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center py-24 border-b border-[#e7ddd0] bg-[#fcf5eb]"
+        className="text-center bg-[url(/Images/feather.jpg)] flex justify-center md:justify-end items-center border-b bg-no-repeat bg-cover bg-center border-[#e7ddd0] bg-[#fcf5eb] h-[300px] md:h-[500px]"
       >
-        <h1 className="text-5xl font-extrabold uppercase tracking-widest text-[#e75b1e] drop-shadow-sm">
-          Letter Gallery
-        </h1>
+        <div className="px-4 md:ml-20 text-left">
+          <h1 className="text-4xl md:text-6xl font-extrabold uppercase tracking-widest text-black drop-shadow-sm">
+            Letter Gallery
+          </h1>
+          <p className="mt-4 text-sm md:text-base max-w-md md:max-w-xl text-[#444]">
+            Memory traced across time in delicate letters, holding love, stories, and distant sentiments alive.
+          </p>
+        </div>
       </motion.section>
 
-      <section className="py-16 px-4">
-        {/* Filters */}
+      <section className="py-16 px-4 md:px-12">
+        {/* Filter Tags */}
         <div className="max-w-7xl mx-auto mb-10 text-center">
           <div className="flex flex-wrap justify-center gap-3">
             {['Love Letters', 'War Political', 'Family', 'Travel', 'Moviecards'].map(tag => {
@@ -112,96 +118,87 @@ const LettersPage = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto  grid grid-cols-1 md:grid-cols-5 gap-4">
-          <input
-            type="text"
-            placeholder="Search title or story"
-            className="col-span-2 px-4 py-2 border border-[#e7ddd0] rounded-md"
-            value={localSearchTerm}
-            onChange={(e) => setLocalSearchTerm(e.target.value)}
-          />
-          <select
-            className="px-4 py-2 border border-[#e7ddd0] rounded-md"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="">By Category</option>
-            <option value="love-letters">Love Letters</option>
-            <option value="family">Family</option>
-            <option value="war-political-turmoil">War Political</option>
-            <option value="travel">Travel</option>
-            <option value="dairypages-newspaper">Dairy News</option>
-            <option value="cards-postcards">Cards Postcard</option>
-            <option value="moviecards">Moviecards</option>
-            <option value="calenders">Calender</option>
-            <option value="letter-by-famous-personalities">Famous letters</option>
-            <option value="others">Others</option>
-          </select>
-          <select
-            className="px-4 py-2 border border-[#e7ddd0] rounded-md"
-            value={selectedDecade}
-            onChange={(e) => setSelectedDecade(e.target.value)}
-          >
-            <option value="">By Decade</option>
-            {[...Array(12)].map((_, i) => {
-              const decade = 1900 + i * 10;
-              return <option key={decade}>{decade}</option>;
-            })}
-          </select>
-      
+        {/* Filter Inputs */}
+        <div className="max-w-7xl mx-auto mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 bg-[#fdf8f3] p-6 rounded-2xl">
+            <input
+              type="text"
+              placeholder="Search title or story..."
+              className="col-span-1 md:col-span-2 px-4 py-3 rounded-xl border border-[#c5b7a3] bg-white text-gray-900 placeholder:text-[#60584c] placeholder:italic font-serif shadow-sm focus:outline-none focus:ring-2 focus:ring-[#b75512]"
+              value={localSearchTerm}
+              onChange={(e) => setLocalSearchTerm(e.target.value)}
+            />
+            <select
+              className="col-span-1 px-4 py-3 rounded-xl border border-[#c5b7a3] text-gray-800 bg-white font-serif shadow-sm focus:outline-none focus:ring-2 focus:ring-[#b75512]"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">By Category</option>
+              <option value="love-letters">Love Letters</option>
+              <option value="family">Family</option>
+              <option value="war-political-turmoil">War Political</option>
+              <option value="travel">Travel</option>
+              <option value="dairypages-newspaper">Dairy News</option>
+              <option value="cards-postcards">Cards Postcard</option>
+              <option value="moviecards">Moviecards</option>
+              <option value="calenders">Calender</option>
+              <option value="letter-by-famous-personalities">Famous Letters</option>
+              <option value="others">Others</option>
+            </select>
+            <select
+              className="col-span-1 px-4 py-3 rounded-xl border border-[#c5b7a3] text-gray-800 bg-white font-serif shadow-sm focus:outline-none focus:ring-2 focus:ring-[#b75512]"
+              value={selectedDecade}
+              onChange={(e) => setSelectedDecade(e.target.value)}
+            >
+              <option value="">By Decade</option>
+              {[...Array(12)].map((_, i) => {
+                const decade = 1900 + i * 10;
+                return <option key={decade}>{decade}</option>;
+              })}
+            </select>
+          </div>
         </div>
 
-        {/* Letters Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${selectedCategory}-${selectedDecade}-${localSearchTerm}-${currentPage}`}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 pt-10 max-w-7xl mx-auto"
-          >
-            {loading ? (
-              <p className="col-span-full text-center text-gray-500">Loading...</p>
-            ) : paginatedData.length === 0 ? (
-              <p className="col-span-full text-center text-gray-500">No results found.</p>
-            ) : (
-              paginatedData.map((item) => (
-                <div
-                  key={item._id}
-                  className="relative group bg-[#fcf5eb] border border-[#e7ddd0] rounded-xl shadow-sm p-4 flex flex-col hover:shadow-md transition-all"
-                >
-                  <div className="relative w-full h-64 mb-4 overflow-hidden rounded-md">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover border border-[#e7ddd0] rounded-md"
-                    />
-                    <div className="absolute bottom-0 left-0 w-full px-4 py-3 bg-gradient-to-t from-black/60 to-transparent text-white z-10 rounded-b-md">
-                      <p className="text-xs italic tracking-wide text-[#f3f3f3]">{item.dateimage}</p>
-                      <h3 className="text-lg font-bold tracking-wide leading-snug line-clamp-2 text-white drop-shadow-md">
-                        {item.title}
-                      </h3>
-                    </div>
-                    <Link
-                      to={`/details/${item._id}`}
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"
-                    >
-                      <span className="text-white bg-[#e75b1e] px-4 py-2 rounded shadow font-bold hover:bg-[#c44c14]">
-                        Read More
-                      </span>
-                    </Link>
-                  </div>
-                  <p className="text-[#555555] text-justify line-clamp-3">{item.story}</p>
+        {/* Letter Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto px-4 justify-items-center">
+          <AnimatePresence>
+            {paginatedData.map((item) => (
+              <motion.div
+                key={item._id}
+                initial={{ opacity: 0, scale: 0.95, y: 50 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 30 }}
+                transition={{ duration: 0.5 }}
+                className="bg-[#fcf5eb] shadow-md rounded-xl overflow-hidden w-full max-w-xl border border-[#e7ddd0]"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-64 md:h-[320px] object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl md:text-2xl font-bold font-serif text-[#333333] mb-1">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs uppercase font-semibold text-[#e75b1e] tracking-wider mb-2">
+                    {item.dateimage}
+                  </p>
+                  <p className="text-[#555555] text-sm mb-4 line-clamp-3">{item.story}</p>
+                  <Link to={`/details/${item._id}`}>
+                    <button className="border border-[#e75b1e] text-[#e75b1e] px-4 py-2 rounded hover:bg-[#fde7db] transition flex items-center text-sm">
+                      Continue Reading
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </button>
+                  </Link>
                 </div>
-              ))
-            )}
-          </motion.div>
-        </AnimatePresence>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center mt-10 gap-2">
+          <div className="flex flex-wrap justify-center mt-10 gap-2">
             <button
               className="px-4 py-2 rounded border bg-white text-[#e75b1e] hover:bg-[#e7ddd0]"
               disabled={currentPage === 1}
@@ -209,17 +206,19 @@ const LettersPage = () => {
             >
               Previous
             </button>
-
             {getVisiblePageNumbers().map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 rounded border ${currentPage === page ? 'bg-[#e75b1e] text-white' : 'bg-white text-[#e75b1e] hover:bg-[#e7ddd0]'}`}
+                className={`px-4 py-2 rounded border ${
+                  currentPage === page
+                    ? 'bg-[#e75b1e] text-white'
+                    : 'bg-white text-[#e75b1e] hover:bg-[#e7ddd0]'
+                }`}
               >
                 {page}
               </button>
             ))}
-
             <button
               className="px-4 py-2 rounded border bg-white text-[#e75b1e] hover:bg-[#e7ddd0]"
               disabled={currentPage === totalPages}
@@ -231,16 +230,16 @@ const LettersPage = () => {
         )}
       </section>
 
-      <section className="py-12 bg-[#fcf5eb] border-t border-[#e7ddd0] text-center">
+      <section className="py-12 bg-[#fcf5eb] border-t border-[#e7ddd0] text-center px-4">
         <h4 className="text-2xl font-bold mb-2 uppercase tracking-wide">Want more historic letters?</h4>
         <p className="mb-4 text-[#555555]">Join our archive mailing list and never miss an update.</p>
-        <div className="flex justify-center items-center gap-2 flex-wrap max-w-lg mx-auto">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-2 flex-wrap max-w-lg mx-auto">
           <input
             type="email"
             placeholder="Your email address"
-            className="px-4 py-2 border border-[#e7ddd0] rounded-md"
+            className="w-full sm:w-auto px-4 py-2 border border-[#e7ddd0] rounded-md"
           />
-          <button className="bg-[#e75b1e] text-white px-4 py-2 rounded-md hover:bg-[#c44c14] transition">
+          <button className="w-full sm:w-auto bg-[#e75b1e] text-white px-4 py-2 rounded-md hover:bg-[#c44c14] transition">
             Subscribe
           </button>
         </div>
