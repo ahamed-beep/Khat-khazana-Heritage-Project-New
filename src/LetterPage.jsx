@@ -7,7 +7,6 @@ import Nax from './Components/Nax';
 import Footer from './Components/Footer';
 import { fetchApprovedLetters } from './Components/Redux/submission';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 18;
 const MAX_VISIBLE_PAGES = 3;
@@ -84,17 +83,11 @@ const LettersPage = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center bg-[url(/Images/feather.jpg)] flex justify-end items-center  border-b bg-no-repeat object-cover object-center  border-[#e7ddd0] bg-[#fcf5eb]  h-[500px]  bg-cover bg-center"
+        className="text-center py-24 border-b border-[#e7ddd0] bg-[#fcf5eb]"
       >
-        <div className='ml-20 mx-15 '>
-
-        <h1 className="  text-6xl  font-extrabold uppercase tracking-widest text-black drop-shadow-sm">
+        <h1 className="text-5xl font-extrabold uppercase tracking-widest text-[#e75b1e] drop-shadow-sm">
           Letter Gallery
         </h1>
-
-        <p className='  max-w-[600px]'> Memory traced across time in delicate letters, holding love, stories, and distant sentiments alive. </p>
-        </div>
-        
       </motion.section>
 
       <section className="py-16 px-4">
@@ -119,50 +112,46 @@ const LettersPage = () => {
           </div>
         </div>
 
-      <div className="max-w-7xl mx-auto mb-12">
-  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 bg-[#fdf8f3] p-6 rounded-2xl ">
-    <input
-      type="text"
-      placeholder="Search title or story..."
-      className="col-span-2 px-4 py-3 rounded-xl border border-[#c5b7a3] bg-white text-gray-900 placeholder:text-[#60584c] placeholder:italic font-serif shadow-sm focus:outline-none focus:ring-2 focus:ring-[#b75512]"
-      value={localSearchTerm}
-      onChange={(e) => setLocalSearchTerm(e.target.value)}
-    />
-    
-    <select
-      className="px-4 py-3 rounded-xl border border-[#c5b7a3] text-gray-800 bg-white font-serif shadow-sm focus:outline-none focus:ring-2 focus:ring-[#b75512]"
-      value={selectedCategory}
-      onChange={(e) => setSelectedCategory(e.target.value)}
-    >
-      <option value="">By Category</option>
-      <option value="love-letters">Love Letters</option>
-      <option value="family">Family</option>
-      <option value="war-political-turmoil">War Political</option>
-      <option value="travel">Travel</option>
-      <option value="dairypages-newspaper">Dairy News</option>
-      <option value="cards-postcards">Cards Postcard</option>
-      <option value="moviecards">Moviecards</option>
-      <option value="calenders">Calender</option>
-      <option value="letter-by-famous-personalities">Famous Letters</option>
-      <option value="others">Others</option>
-    </select>
+        <div className="max-w-7xl mx-auto  grid grid-cols-1 md:grid-cols-5 gap-4">
+          <input
+            type="text"
+            placeholder="Search title or story"
+            className="col-span-2 px-4 py-2 border border-[#e7ddd0] rounded-md"
+            value={localSearchTerm}
+            onChange={(e) => setLocalSearchTerm(e.target.value)}
+          />
+          <select
+            className="px-4 py-2 border border-[#e7ddd0] rounded-md"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">By Category</option>
+            <option value="love-letters">Love Letters</option>
+            <option value="family">Family</option>
+            <option value="war-political-turmoil">War Political</option>
+            <option value="travel">Travel</option>
+            <option value="dairypages-newspaper">Dairy News</option>
+            <option value="cards-postcards">Cards Postcard</option>
+            <option value="moviecards">Moviecards</option>
+            <option value="calenders">Calender</option>
+            <option value="letter-by-famous-personalities">Famous letters</option>
+            <option value="others">Others</option>
+          </select>
+          <select
+            className="px-4 py-2 border border-[#e7ddd0] rounded-md"
+            value={selectedDecade}
+            onChange={(e) => setSelectedDecade(e.target.value)}
+          >
+            <option value="">By Decade</option>
+            {[...Array(12)].map((_, i) => {
+              const decade = 1900 + i * 10;
+              return <option key={decade}>{decade}</option>;
+            })}
+          </select>
+      
+        </div>
 
-    <select
-      className="px-4 py-3 rounded-xl border border-[#c5b7a3] text-gray-800 bg-white font-serif shadow-sm focus:outline-none focus:ring-2 focus:ring-[#b75512]"
-      value={selectedDecade}
-      onChange={(e) => setSelectedDecade(e.target.value)}
-    >
-      <option value="">By Decade</option>
-      {[...Array(12)].map((_, i) => {
-        const decade = 1900 + i * 10;
-        return <option key={decade}>{decade}</option>;
-      })}
-    </select>
-  </div>
-</div>
-
-
-        {/* Letters Grid
+        {/* Letters Grid */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`${selectedCategory}-${selectedDecade}-${localSearchTerm}-${currentPage}`}
@@ -180,9 +169,8 @@ const LettersPage = () => {
               paginatedData.map((item) => (
                 <div
                   key={item._id}
-                  className="relative group bg-[#fcf5eb]   p-4 flex flex-col hover:shadow-md transition-all"
+                  className="relative group bg-[#fcf5eb] border border-[#e7ddd0] rounded-xl shadow-sm p-4 flex flex-col hover:shadow-md transition-all"
                 >
-                     <h3 className="text-lg font-semibold leading-snug line-clamp-2 my-1 mx-2  text-black drop-shadow-md">{item.title}</h3>
                   <div className="relative w-full h-64 mb-4 overflow-hidden rounded-md">
                     <img
                       src={item.image}
@@ -190,8 +178,10 @@ const LettersPage = () => {
                       className="w-full h-full object-cover border border-[#e7ddd0] rounded-md"
                     />
                     <div className="absolute bottom-0 left-0 w-full px-4 py-3 bg-gradient-to-t from-black/60 to-transparent text-white z-10 rounded-b-md">
-                      <p className="text-md font-semibold italic tracking-wide  text-white">{item.dateimage}</p>
-                   
+                      <p className="text-xs italic tracking-wide text-[#f3f3f3]">{item.dateimage}</p>
+                      <h3 className="text-lg font-bold tracking-wide leading-snug line-clamp-2 text-white drop-shadow-md">
+                        {item.title}
+                      </h3>
                     </div>
                     <Link
                       to={`/details/${item._id}`}
@@ -207,42 +197,8 @@ const LettersPage = () => {
               ))
             )}
           </motion.div>
-        </AnimatePresence> */}
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto px-4 justify-items-center">
-        <AnimatePresence>
-          {paginatedData.map((item) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95, y: 50 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              transition={{ duration: 0.5 }}
-              className="bg-[#fcf5eb] shadow-md rounded-xl overflow-hidden w-full max-w-xl border border-[#e7ddd0]"
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-[320px] object-cover"
-              />
-              <div className="p-6">
-                <h3 className="text-2xl font-bold font-serif text-[#333333] mb-1">
-                  {item.title}
-                </h3>
-                <p className="text-xs uppercase font-semibold text-[#e75b1e] tracking-wider mb-2">
-                  {item.dateimage}
-                </p>
-                <p className="text-[#555555] text-sm mb-4 line-clamp-3">{item.story}</p>
-                <Link              to={`/details/${item._id}`}>
-                  <button className="border border-[#e75b1e] text-[#e75b1e] px-4 py-2 rounded hover:bg-[#fde7db] transition flex items-center text-sm">
-                    Continue Reading
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </button>
-                </Link>
-              </div>
-            </motion.div>
-          ))}
         </AnimatePresence>
-      </div>
+
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center mt-10 gap-2">
