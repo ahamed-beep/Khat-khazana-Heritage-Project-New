@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
-import { getSingleSubmissionById, updateSubmissionById } from "../Redux/submission";
+import { deleteSubmission, getSingleSubmissionById, updateSubmissionById } from "../Redux/submission";
+import toast from "react-hot-toast";
 
 const SubmissionView = () => {
   const { id } = useParams();
@@ -51,6 +52,16 @@ const SubmissionView = () => {
       return updatedData;
     });
   };
+const handleDelete = () => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this submission?");
+  if (confirmDelete) {
+    dispatch(deleteSubmission(id)).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") {
+     toast.success("submission deleted successfully")
+      }
+    });
+  }
+};
 
   const handleUpdate = () => {
     dispatch(updateSubmissionById({ id, updatedData: formData }));
@@ -135,12 +146,23 @@ const SubmissionView = () => {
           </select>
         </div>
 
-        <button
-          onClick={handleUpdate}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
-        >
-          Update
-        </button>
+       <div className="flex gap-4">
+  <button
+    onClick={handleUpdate}
+    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+  >
+    Update
+  </button>
+
+  <button
+    onClick={handleDelete}
+    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+  >
+    Delete
+  </button>
+</div>
+
+        
       </div>
     </div>
   );

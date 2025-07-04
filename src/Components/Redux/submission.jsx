@@ -143,6 +143,17 @@ export const adminPostSubmission = createAsyncThunk(
     }
   }
 );
+export const deleteSubmission = createAsyncThunk(
+  'submission/deleteSubmission',
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await axiosinstacne.delete(`/deletesubmission/${id}`);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data.message || "Delete failed");
+    }
+  }
+);
 
 
 const submissionslice = createSlice({
@@ -299,7 +310,19 @@ builder.addCase(updateSubmissionById.rejected, (state, action) => {
 .addCase(fetchApprovedSubmissionById.rejected, (state, action) => {
   state.loading = false;
   state.error = action.payload;
-});
+})
+.addCase(deleteSubmission.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteSubmission.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(deleteSubmission.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to delete";
+      });
 
     }
 });

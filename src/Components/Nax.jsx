@@ -3,7 +3,7 @@ import {
   MagnifyingGlassIcon,
   XMarkIcon,
   Bars3Icon,
-  HomeIcon,
+  EnvelopeIcon,
 } from "@heroicons/react/24/solid";
 import { Link, useLocation, useNavigate } from "react-router";
 import MobileSidebar from "./MobileSidebar";
@@ -59,106 +59,103 @@ const Nax = () => {
     { label: "LETTERS", to: "/letters" },
     { label: "PHOTOGRAPHS", to: "/photo" },
     { label: "SUBMISSION", to: "/sub" },
-    { label: "SUPPORT", to: "/support" },
     { label: "CONTACT US", to: "/contact" },
   ];
 
   return (
     <>
-      {/* Top Logo/Header */}
-      <div className="w-full text-center py-4 bg-white shadow-sm">
-        <h1 className="text-3xl font-serif font-semibold tracking-widest uppercase text-gray-800">
-          KHAT KHAZANA HERITAGE PROJECT
-        </h1>
-      </div>
+      <header className="w-full bg-[#fdf8f3]/90 backdrop-blur-sm border-b border-[#e7ddd0] shadow-md relative z-50">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between px-4 py-2 ">
+        <Link to="/" className="flex items-center gap-2 md:gap-4">
+        <div className=" overflow-hidden h-20 object-center ">
 
-      {/* Main Navigation */}
-   <nav className="sticky top-0 w-full bg-white px-4 py-3 border-b border-gray-200 z-50">
-  <div className="max-w-6xl mx-auto">
-    {/* Search bar */}
-    {showSearch ? (
-      <div className="flex justify-center ">
-        <div className="relative w-full md:w-[800px]">
-          <div className="flex items-center     bg-white shadow-sm">
-            <input
-              type="text"
-              autoFocus
-              placeholder="Type then hit enter to search..."
-              className="text-lg w-full outline-none font-serif bg-white text-gray-700"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              onKeyDown={handleSearchSubmit}
-            />
-            <button onClick={handleClearSearch} aria-label="Clear search">
-              <XMarkIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-            </button>
-          </div>
-          {searchError && (
-            <p className="text-xs text-red-500 mt-1">{searchError}</p>
-          )}
-        </div>
-      </div>
-    ) : (
-      <div className="flex justify-center items-center flex-wrap gap-10 md:gap-16">
-       <Link to="/" className="hover:text-gray-900 hidden md:block">
-  <HomeIcon className="h-5 w-5 text-gray-700" />
+  <img
+    src="/Images/on.png"
+    alt="Site Logo"
+    className=" w-auto  h-20 " 
+    />
+    </div>
+  <div className="flex flex-col leading-tight">
+    <span className="text-2xl font-serif tracking-wider text-gray-800">KHAT KHAZANA</span>
+    <p className="text-xs  font-serif text-gray-500 italic">Preserving Inked Memories</p>
+  </div>
 </Link>
 
 
-        <div className="hidden md:flex items-center gap-15">
-          {navLinks.map((link) => {
-            const isSupport = link.label === "SUPPORT";
-            const isActive = location.pathname === link.to;
+          <div className="hidden md:flex items-center space-x-4">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.to;
+              return (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className={`text-sm font-medium tracking-wide font-serif transition-all duration-200 ${
+                    isActive
+                      ? "text-black underline underline-offset-4"
+                      : "text-gray-700 hover:text-black"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
 
-            const supportClass = isSupport
-              ? "animate-pulse text-orange-600 font-extrabold"
-              : isActive
-              ? "text-black font-semibold"
-              : "text-gray-700 hover:text-black";
+            <Link
+              to="/support"
+              className="flex items-center gap-2 bg-[#ede2d2] text-[#703b1d] px-3 py-1 rounded-full shadow-sm hover:bg-[#e6d7c5] transition"
+            >
+              <EnvelopeIcon className="h-4 w-4" />
+              Support
+            </Link>
 
-            return (
-              <Link
-                key={link.label}
-                to={link.to}
-                className={`text-sm font-medium transition-all duration-300 ${supportClass}`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+            <button onClick={() => setShowSearch(true)} aria-label="Search">
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-700 hover:text-black" />
+            </button>
+          </div>
+
+          {/* Mobile */}
+          <div className="flex w-full justify-between items-center md:hidden mt-4">
+            <button onClick={() => setIsSidebarOpen(true)} aria-label="Menu">
+              <Bars3Icon className="h-6 w-6 text-gray-700" />
+            </button>
+            <button onClick={() => setShowSearch(true)} aria-label="Search">
+              <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
+            </button>
+          </div>
         </div>
+          {showSearch && (
+        <div className=" py-4  lg:py-0  lg:pb-3">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="relative flex items-center bg-white border border-gray-300 shadow-md rounded-md">
+              <input
+                type="text"
+                autoFocus
+                placeholder="Type and press enter to search..."
+                className="w-full px-4 py-2 text-lg font-serif text-gray-700 outline-none rounded-md"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onKeyDown={handleSearchSubmit}
+              />
+              <button onClick={handleClearSearch} className="p-2" aria-label="Clear">
+                <XMarkIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+              </button>
+            </div>
+            {searchError && <p className="text-sm text-red-500 mt-1">{searchError}</p>}
+          </div>
+        </div>
+      )}
+      </header>
 
-     {/* For large screens (unchanged) */}
-<div className="hidden md:flex items-center space-x-4">
-  <button onClick={() => setShowSearch(true)} aria-label="Search">
-    <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
-  </button>
-</div>
+      {/* Search Bar */}
+    
 
-{/* For small screens: Menu on left, Search on right */}
-<div className="flex w-full justify-between items-center md:hidden mt-4 px-4">
-  <button onClick={() => setIsSidebarOpen(true)} aria-label="Menu">
-    <Bars3Icon className="h-6 w-6 text-gray-700" />
-  </button>
-  <button onClick={() => setShowSearch(true)} aria-label="Search">
-    <MagnifyingGlassIcon className="h-6 w-6 text-gray-700" />
-  </button>
-</div>
-
-
-      </div>
-    )}
-
-    {/* Mobile Sidebar */}
-    <MobileSidebar
-      isOpen={isSidebarOpen}
-      onClose={() => setIsSidebarOpen(false)}
-      navLinks={navLinks}
-      currentPath={location.pathname}
-    />
-  </div>
-</nav>
-
+      {/* Mobile Sidebar */}
+      <MobileSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        navLinks={[...navLinks, { label: "SUPPORT", to: "/support" }]}
+        currentPath={location.pathname}
+      />
     </>
   );
 };

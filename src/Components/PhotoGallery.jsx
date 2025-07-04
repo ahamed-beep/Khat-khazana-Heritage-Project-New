@@ -19,6 +19,8 @@ const PhotoGallery = () => {
   const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedDecade, setSelectedDecade] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 18;
 
   useEffect(() => {
     dispatch(fetchApprovedPhotographs());
@@ -32,7 +34,6 @@ const PhotoGallery = () => {
 
   const filteredData = useMemo(() => {
     let data = approvedPhotographs || [];
-
     const searchTerm = location.pathname === '/search' ? globalSearchTerm : localSearchTerm;
 
     if (selectedCategory) {
@@ -62,121 +63,202 @@ const PhotoGallery = () => {
     location.pathname,
   ]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [localSearchTerm, selectedCategory, selectedDecade, globalSearchTerm]);
+
   const handleImageClick = (id) => {
     navigate(`/details/${id}`);
   };
 
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
   return (
-    <div>
+    <div className="bg-[#fdf8f3] text-[#333333] font-serif">
       <Nax />
 
-      <div className="bg-white py-10">
-        <div className="text-center">
-          <h1 className="text-5xl md:text-6xl font-heritage font-bold text-black mb-6">
-            Heritage Photographs
+      {/* Header */}
+     <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+            style={{
+    backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/Images/compass.jpg')`,
+  }}
+          className="text-center  flex justify-start items-center   border-b bg-no-repeat object-cover object-center  border-[#e7ddd0] bg-[#fcf5eb]  h-[500px]  bg-cover bg-center"
+        >
+          <div className='ml-20 mx-15 '>
+  
+          <h1 className="  text-6xl  text-shadow-md font-extrabold uppercase tracking-widest text-white drop-shadow-sm">
+            Photo Gallery
           </h1>
-          <h2 className="text-2xl md:text-3xl font-heritage font-medium text-black mb-6 max-w-3xl mx-auto">
-            FREE Vintage Illustrations for your creative projects!
-          </h2>
-          <p className="text-[#1a1a1a] text-[20px] leading-[1.8] tracking-wide mb-6 font-light max-w-3xl mx-auto">
-            <strong className="font-semibold">
-              The Heritage Library collects beautiful photographs from the past which are 100% free to use...
-            </strong>
-          </p>
+  
+          <p className='  text-white max-w-[600px]'> Memory traced across time in delicate letters, holding love, stories, and distant sentiments alive. </p>
+          </div>
+          
+        </motion.section>
+<div className="max-w-7xl mx-auto mt-10 mb-8 text-center">
+  <div className="flex flex-wrap justify-center gap-3">
+    {['Love Letters', 'War Political', 'Family', 'Travel', 'Moviecards'].map(tag => {
+      const value = tag.toLowerCase().replace(/ /g, '-');
+      return (
+        <button
+          key={tag}
+          onClick={() => {
+            setSelectedCategory(value);
+            handleSearch();
+          }}
+          className="px-5 py-2 text-sm font-medium tracking-wide font-serif text-[#5a3921] bg-[#f7ede2] hover:bg-[#e7ddd0] border border-[#decfbf] rounded-full shadow-sm transition-colors duration-200"
+        >
+          #{tag}
+        </button>
+      );
+    })}
+  </div>
+</div>
+
+      {/* Filters */}
+ <div className="max-w-7xl mx-auto mb-10 px-4">
+  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-6 bg-[#fdf8f3]  rounded-2xl ">
+
+    <input
+      type="text"
+      placeholder="Search title or story..."
+      className="col-span-2 px-5 py-3 border border-[#1f1f1f] rounded-xl bg-white text-gray-900 placeholder:text-[#2a2a2a] placeholder:font-medium shadow-inner focus:outline-none focus:ring-2 focus:ring-[#b75512]"
+      value={localSearchTerm}
+      onChange={(e) => setLocalSearchTerm(e.target.value)}
+    />
+
+    <select
+      className="px-4 py-3 rounded-xl border border-[#60584c] text-gray-800 bg-white font-medium shadow-inner focus:outline-none focus:ring-2 focus:ring-[#b75512]"
+      value={selectedCategory}
+      onChange={(e) => setSelectedCategory(e.target.value)}
+    >
+      <option value="">By Category</option>
+      <option value="love-letters">Love Letters</option>
+      <option value="family">Family</option>
+      <option value="war-political-turmoil">War Political</option>
+      <option value="travel">Travel</option>
+      <option value="dairypages-newspaper">Dairy News</option>
+      <option value="cards-postcards">Cards Postcard</option>
+      <option value="moviecards">Moviecards</option>
+      <option value="calenders">Calender</option>
+      <option value="letter-by-famous-personalities">Famous letters</option>
+      <option value="others">Others</option>
+    </select>
+
+    <select
+      className="px-4 py-3 rounded-xl border border-[#60584c] text-gray-800 bg-white font-medium shadow-inner focus:outline-none focus:ring-2 focus:ring-[#b75512]"
+      value={selectedDecade}
+      onChange={(e) => setSelectedDecade(e.target.value)}
+    >
+      <option value="">By Decade</option>
+      {[...Array(12)].map((_, i) => {
+        const decade = 1900 + i * 10;
+        return <option key={decade}>{decade}</option>;
+      })}
+    </select>
+  </div>
+</div>
+
+
+      {/* Result Count */}
+      {filteredData.length > 0 && (
+        <div className="text-center mt-6 text-gray-600 text-lg">
+          Showing <strong>{filteredData.length}</strong> result{filteredData.length > 1 ? 's' : ''}{' '}
+          {selectedCategory && ` in “${selectedCategory.replace(/-/g, ' ')}”`}
         </div>
-      </div>
+      )}
 
-      <div className="w-full min-h-screen bg-white flex flex-col items-center px-4 relative">
-        <div className="h-20 w-full" />
-
-        {/* Search Controls */}
-        <div className="bg-white rounded-lg shadow-lg flex flex-col md:flex-row w-full items-stretch border border-gray-200 max-w-4xl">
-          <input
-            type="text"
-            placeholder="Search for a title"
-            className="flex-1 p-4 border-b md:border-b-0 md:border-r border-gray-200 focus:outline-none w-full"
-            value={localSearchTerm}
-            onChange={e => setLocalSearchTerm(e.target.value)}
-          />
-          <select
-            className="p-4 border-t md:border-t-0 md:border-l border-gray-200 w-full md:w-1/4 focus:outline-none"
-            value={selectedCategory}
-            onChange={e => setSelectedCategory(e.target.value)}
-          >
-            <option value="">By Category</option>
-            <option value="love-letters">Love Letters</option>
-            <option value="family">Family</option>
-            <option value="war-political-turmoil">War Political</option>
-            <option value="travel">Travel</option>
-            <option value="dairypages-newspaper">Dairy News</option>
-            <option value="cards-postcards">Cards Postcard</option>
-            <option value="moviecards">Moviecards</option>
-            <option value="calenders">Calender</option>
-            <option value="letter-by-famous-personalities">Famous letters</option>
-            <option value="others">Others</option>
-          </select>
-          <select
-            className="p-4 border-t md:border-t-0 md:border-l border-gray-200 w-full md:w-1/4 focus:outline-none"
-            value={selectedDecade}
-            onChange={e => setSelectedDecade(e.target.value)}
-          >
-            <option value="">By Decade</option>
-            {[...Array(12)].map((_, i) => (
-              <option key={i} value={1900 + i * 10}>{1900 + i * 10}</option>
-            ))}
-          </select>
-        </div>
-
-        {filteredData.length > 0 && (
-          <p className="mt-6 text-lg font-medium text-gray-700">
-            Showing <span className="font-bold">{filteredData.length}</span> photograph
-            {filteredData.length > 1 ? 's' : ''}
-            {selectedCategory && ` in “${selectedCategory.replace(/-/g, ' ')}”`}
-          </p>
-        )}
-
-        {/* Fade-in Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${selectedCategory}-${selectedDecade}-${localSearchTerm}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10 w-full max-w-6xl"
-          >
-            {loading && approvedPhotographs.length === 0 ? (
-              Array(6).fill(0).map((_, i) => (
-                <div key={i} className="h-64 bg-gray-100 animate-pulse rounded-lg" />
+      {/* Gallery Grid */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${selectedCategory}-${selectedDecade}-${localSearchTerm}-${currentPage}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          className="columns-1 sm:columns-2 lg:columns-3  max-w-6xl mx-auto px-4 py-10 space-y-4"
+        >
+          {loading && approvedPhotographs.length === 0 ? (
+            Array(6)
+              .fill(0)
+              .map((_, i) => (
+                <div key={i} className="h-64 bg-gray-200 animate-pulse rounded-lg w-full" />
               ))
-            ) : filteredData.length === 0 ? (
-              <p className="text-center col-span-full text-gray-500">No results found.</p>
-            ) : (
-              filteredData.map(item => (
+          ) : filteredData.length === 0 ? (
+            <p className="text-center col-span-full text-gray-500 w-full">No results found.</p>
+          ) : (
+            filteredData
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((item) => (
                 <div
                   key={item._id}
                   onClick={() => handleImageClick(item._id)}
-                  className="group flex flex-col items-center text-center bg-white hover:bg-[#f4f1ec] shadow-md hover:shadow-xl transition-all duration-300 p-4 rounded-lg cursor-pointer"
+                  className="mb-4 break-inside-avoid cursor-pointer group  overflow-hidden shadow hover:shadow-xl transition-shadow duration-300 bg-white"
                 >
-                  <div className="text-md italic font-semibold mb-3">
-                    <hr className="my-3 border-t-4 border-black w-full" />
-                    {item.dateimage}
-                    <hr className="my-3 border-t-2 border-black w-full" />
+                  <div className="relative">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-[300px] object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                      <h2 className="text-white text-lg font-semibold leading-snug">{item.title}</h2>
+                      <p className="text-sm text-gray-300 italic">{item.dateimage}</p>
+                    </div>
                   </div>
-                  <h2 className="text-3xl text-[#e75b1e] font-bold mb-4 leading-snug group-hover:text-[#003366] transition-colors duration-300">
-                    {item.title}
-                  </h2>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full border-4 border-black transform group-hover:scale-105 transition-transform duration-300"
-                  />
                 </div>
               ))
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Pagination */}
+  {totalPages > 1 && (
+  <div className="flex justify-center mt-10 mb-10 gap-2">
+    <button
+      className="px-4 py-2 rounded border bg-white text-[#e75b1e] hover:bg-[#e7ddd0]"
+      disabled={currentPage === 1}
+      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+    >
+      Previous
+    </button>
+
+    {(() => {
+      const start = Math.max(currentPage - 1, 1);
+      const end = Math.min(start + 2, totalPages);
+      const visiblePages = [];
+
+      for (let i = start; i <= end; i++) {
+        visiblePages.push(i);
+      }
+
+      return visiblePages.map((page) => (
+        <button
+          key={page}
+          onClick={() => setCurrentPage(page)}
+          className={`px-4 py-2 rounded border ${
+            currentPage === page
+              ? 'bg-[#e75b1e] text-white'
+              : 'bg-white text-[#e75b1e] hover:bg-[#e7ddd0]'
+          }`}
+        >
+          {page}
+        </button>
+      ));
+    })()}
+
+    <button
+      className="px-4 py-2 rounded border bg-white text-[#e75b1e] hover:bg-[#e7ddd0]"
+      disabled={currentPage === totalPages}
+      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+    >
+      Next
+    </button>
+  </div>
+)}
+
 
       <Footer />
     </div>

@@ -86,52 +86,58 @@ const SubmissionForm = () => {
   };
 
   // Form submission handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Validate terms and conditions
-    if (!termsandcondition) {
-      toast.error('Please accept the terms and conditions to submit the form');
-      return;
-    }
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Validate required fields
+  if (!termsandcondition) {
+    toast.error('Please accept the terms and conditions to submit the form');
+    return;
+  }
 
-    // Validate image is from before 1992
-    if (!imagebefore) {
-      toast.error('The image must be from before the year 1992');
-      return;
-    }
+  if (!imagebefore) {
+    toast.error('The image must be from before the year 1992');
+    return;
+  }
 
-    // Prepare the submission data object
-    const submissionData = {
-      name,
-      location,
-      phone,
-      phone2,
-      email,
-      socialmedia,
-      guadianowner,
-      attachment,
-      otherspecify,
-      image,
-      dateimage,
-      placeimage,
-      photographcaptain,
-      story,
-      narrative,
-      imageadded,
-      imagebefore,
-      termsandcondition,
-      category,
-      title,
-      language
-    };
+  if (!story || story.trim() === '') {
+    toast.error('Story is required');
+    return;
+  }
 
-    // Dispatch the Redux action
-    dispatch(postsubmissiondata(submissionData));
-    
-    // Show success message
-    toast.success('Form submitted successfully!');
+  // Prepare the submission data object
+  const submissionData = {
+    name,
+    location,
+    phone,
+    phone2,
+    email,
+    socialmedia,
+    guadianowner,
+    attachment,
+    otherspecify,
+    image,
+    dateimage,
+    placeimage,
+    photographcaptain,
+    story: story.trim(), // Ensure no whitespace-only stories
+    narrative,
+    imageadded,
+    imagebefore,
+    termsandcondition,
+    category,
+    title,
+    language
   };
+
+  try {
+    // Dispatch the Redux action
+    await dispatch(postsubmissiondata(submissionData));
+    toast.success('Form submitted successfully!');
+  } catch (error) {
+    toast.error('Submission failed. Please try again.');
+  }
+};
 
   return (
     <div>
@@ -496,6 +502,17 @@ const SubmissionForm = () => {
   <p style={{ fontSize: '9px' }} className="text-[#2d2d2d]">Name the people in the photograph.</p>
 </div>
 
+<div className="mb-8 p-6 rounded-xl shadow-md backdrop-blur-md bg-white/30 border border-black/20">
+  <h1 className="font-semibold text-[12px] font-sans text-[#4b4b4b]">STORY ABOUT THE IMAGE *</h1>
+  <p className="py-4 text-[9px] text-[#2d2d2d]">Tell us the story behind this image (required)</p>
+  <textarea 
+    rows="4" 
+    value={story}
+    onChange={handleStoryChange}
+    className="w-full p-2 bg-white border border-gray-400 focus:border-[#cd9933] focus:ring-2 focus:ring-[#cd9933]/30 outline-none rounded"
+    required
+  ></textarea>
+</div>
 <div className="mb-8 p-6 rounded-xl shadow-md backdrop-blur-md bg-white/30 border border-black/20">
   <h1 className="font-semibold text-[12px] font-sans text-[#4b4b4b]">PASTE A NARRATIVE ABOUT THE IMAGE BELOW</h1>
   <p className="py-4 text-[9px] text-[#2d2d2d]">Short or Long Essay or a Paragraph about this image.</p>
